@@ -8,14 +8,50 @@ import sys
 import pylab
 import os
 
+import datetime
+import string
 
-def graph_spectrogram(wav_file, begin, end):
+from bandpass_filter import *
+
+def get_timestamp(filename, begin_time):
+    s = os.path.splitext(os.path.basename(filename))[0][10:]
+    extra_minute = int(begin_time/60.)
+    extra_second = int(begin_time - extra_minute*60.)
+
+    hours = int(s[6:8])
+    minutes = int(s[8:10]) + extra_minute
+    seconds = int(s[10:12]) + extra_second
+    if seconds > 60:
+        minutes += 1
+        seconds -= 60
+    if minutes > 60:
+        hours +=1
+        minutes -= 60
+        
+    date = datetime.datetime(year=2000+ int(s[0:2]), month=int(s[2:4]), \
+                             day=int(s[4:6]), \
+                             hour = hours, minute = minutes, second = seconds)
+    print date
+    return date
+
+def graph_spectrogram(wav_file, begin, end, cutoff_low, cutoff_high, order):
     sound_info, Fs = get_wav_info(wav_file)
     pylab.figure(num=None, figsize=(19, 12))
     pylab.subplot(111)
     pylab.title('spectrogram of %r' % wav_file)
     print len (sound_info[begin*Fs: end*Fs]), Fs, len(sound_info)
-    pylab.specgram(sound_info[begin*Fs: end*Fs], Fs=Fs)
+    nfft = 1024
+    data = sound_info[begin*Fs: end*Fs]
+    data = butter_bandpass_filter(data, cutoff_low, cutoff_high, Fs, order)
+    pylab.specgram(data, Fs=Fs, NFFT = nfft, \
+                   noverlap =int(nfft/2), cmap='viridis_r', \
+                   mode = 'psd')
+
+    pylab.colorbar()
+    datestring = get_timestamp(wav_file, begin)
+    pylab.xlabel("Time (seconds since {}) [s]".format(datestring), \
+                 size = 16, ha ='right', x=1.0)
+    pylab.ylabel("PSD", size = 16, ha ='right', position=(0,1))
     pylab.savefig('spectrogram.png')
     pylab.show()
     
@@ -31,13 +67,20 @@ def get_wav_info(wav_file):
 import string
 def main(argv):
     begin = 0
-    end = 10000
+    end = 100
     if len(argv) > 1:
         filename  = argv[1]
     if len(argv) > 2:
         begin = string.atoi(argv[2]) # in seconds
         end = string.atoi(argv[3]) # seconds
-    graph_spectrogram(argv[1], begin, end)
+
+    filename = argv[1]
+    print os.path.splitext(os.path.basename(filename))[0][10:]
+    get_timestamp(filename, begin)
+    cutoff_low = 5000
+    cutoff_high = 70000
+    order = 5 
+    graph_spectrogram(filename, begin, end, cutoff_low, cutoff_high, order)
 
 if __name__ == '__main__':
     main(sys.argv)
