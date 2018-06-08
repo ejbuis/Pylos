@@ -31,7 +31,6 @@ def get_timestamp(filename, begin_time):
     date = datetime.datetime(year=2000+ int(s[0:2]), month=int(s[2:4]), \
                              day=int(s[4:6]), \
                              hour = hours, minute = minutes, second = seconds)
-    print date
     return date
 
 def graph_spectrogram(wav_file, begin, end, cutoff_low, cutoff_high, order):
@@ -39,7 +38,6 @@ def graph_spectrogram(wav_file, begin, end, cutoff_low, cutoff_high, order):
     pylab.figure(num=None, figsize=(19, 12))
     pylab.subplot(111)
     pylab.title('spectrogram of %r' % wav_file)
-    print len (sound_info[begin*Fs: end*Fs]), Fs, len(sound_info)
     nfft = 1024
     data = sound_info[begin*Fs: end*Fs]
     data = butter_bandpass_filter(data, cutoff_low, cutoff_high, Fs, order)
@@ -75,8 +73,6 @@ def main(argv):
         end = string.atoi(argv[3]) # seconds
 
     filename = argv[1]
-    print os.path.splitext(os.path.basename(filename))[0][10:]
-    get_timestamp(filename, begin)
     cutoff_low = 5000
     cutoff_high = 70000
     order = 5 
