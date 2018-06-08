@@ -4,7 +4,6 @@ import numpy.fft as fft
 from scipy import signal
 
 def PSD_using_numpy(ampl, fs):
-    print 'sample freq ', fs
     spectrum = fft.fft(ampl)
     PSD = np.abs(spectrum)**2 * (2./(fs*len(spectrum)))
     freq = fft.fftfreq(len(spectrum),d=1./fs)
@@ -32,8 +31,10 @@ def main():
     plt.plot(freq, freq_data)
     plt.plot(freq_resampled, freq_data_resampled, '--', c='blue')
 
-    sig = np.tile(bip_resampled, 10)
-    sig_noise = sig + 0.1* bip_resampled.max()* np.random.randn(len(sig)) #dit moet echte data zijn...
+#    sig = np.tile(bip_resampled, 10)
+    sig = np.zeros(1000)
+    sig = np.insert(sig, 300, bip_resampled)
+    sig_noise = sig + 0.2* bip_resampled.max()* np.random.randn(len(sig)) #dit moet echte data zijn...
     plt.subplot(413)
     plt.plot(sig_noise)
 
