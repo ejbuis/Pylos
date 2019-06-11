@@ -32,7 +32,7 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
     low = lowcut/nyq
     high = highcut/nyq
-    print low, high
+#    print(low, high)
     b, a = butter(order, [low, high], btype='band', analog=False)
     return b, a
 
@@ -61,7 +61,7 @@ def main(argv):
     parser = OptionParser(usage)
     parser.set_defaults(order=6)
     parser.set_defaults(low_cut=1e3)
-    parser.set_defaults(high_cut=50e3)
+    parser.set_defaults(high_cut=70e3)
     parser.set_defaults(Fs=144000)
 
     parser.add_option("-s", "--sampling", type="float", dest="Fs",
@@ -82,22 +82,31 @@ def main(argv):
     cutoff_low = options.low_cut  # desired cutoff frequency of the filter, Hz
     cutoff_high = options.high_cut   # desired cutoff frequency of the filter, Hz
     
-    waveFile = wave.open('myfile2.wav', 'r')
+    filename = sys.argv[1]
+    waveFile = wave.open(filename, 'r')
     length = waveFile.getnframes()
     time_series = []
+    time_series_filtered = []
 
-    for j in range(0, length/10000):
-        waveData = waveFile.readframes(1)
-        sample_point = struct.unpack("<h", waveData)
-        time_series.append(sample_point[0])
-
+    for i in range(0, 1000):
+        waveFile.setpos(int(i*length/1000))
+        if (i%10 == 0): print(i)
+        for j in range(0, length/1000):
+            waveData = waveFile.readframes(1)
+            sample_point = struct.unpack("<h", waveData)
+            time_series.append(sample_point[0])
+        aid = butter_bandpass_filter(time_series, \
+                                     cutoff_low, \
+                                     cutoff_high, \
+                                     Fs, order)
+        np.concatenate([time_series_filtered, aid])
 
     # Filter the data, and plot both the original and filtered signals.
-    time_series_filtered = butter_bandpass_filter(time_series, cutoff_low, cutoff_high, Fs, order)
 
     path = sys.argv[-1]
     basename = os.path.splitext(os.path.basename(path))[0]
-    writefile(basename+'_filtered.wav', waveFile.getparams(), time_series)
+    writefile(basename+'_filtered.wav', waveFile.getparams(), \
+              time_series_filtered)
 
     
 if __name__ == "__main__":
