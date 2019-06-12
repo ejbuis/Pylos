@@ -55,7 +55,7 @@ def graph_spectrogram(wav_file, begin, end, cutoff_low, cutoff_high, order):
     #    pylab.xlabel("Time (seconds since {}) [s]".format(datestring), \
         #                 size = 16, ha ='right', x=1.0)
     pylab.xlabel("Time (seconds)", size = 16, ha ='right', x=1.0)
-    pylab.ylabel("PSD", size = 16, ha ='right', position=(0,1))
+    pylab.ylabel("Frequency (Hz)", size = 16, ha ='right', position=(0,1))
     pylab.savefig('spectrogram.png')
     pylab.show()
     
