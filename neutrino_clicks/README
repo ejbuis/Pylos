@@ -1,0 +1,11 @@
+This dir contains the scripts to generate a library of neutrino clicks
+It uses an octave script (one_click.m) to generate a 'theoretical' syntheytic neutrino click
+
+The procedure is the following to generate a large neutrino file with a number of clicks:
+   1) use octave script to generate a single click at a certain hydrophone position
+   2) use the python script (neutrino_clip.py) to generate a neutrino click inserted in a noise realisation.
+   
+A noise trace is generated on a existing Pylos data file. Therefore a data file is read and a fft is applied.
+The ifft is then used on the same data, but with a random phase of the complex numbers.
+The neutrino pulse is inserted at a random position. Finally the wav file is stored. This is then repeated for a 
+large number of positions of the hydrophone with respect to the shower axis to get a library of noisy clicks.
