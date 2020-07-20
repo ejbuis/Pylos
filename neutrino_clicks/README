@@ -9,3 +9,5 @@ A noise trace is generated on a existing Pylos data file. Therefore a data file 
 The ifft is then used on the same data, but with a random phase of the complex numbers.
 The neutrino pulse is inserted at a random position. Finally the wav file is stored. This is then repeated for a 
 large number of positions of the hydrophone with respect to the shower axis to get a library of noisy clicks.
+
+Note: all matlab/octave scripts were developed by the Acorne collaboration
