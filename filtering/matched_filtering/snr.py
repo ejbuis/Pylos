@@ -61,7 +61,7 @@ def spectrum(NFFT, Fs, data):
         PSD[:, 0]  +=  double2single*pxx[0:int(NFFT/2)]
         PSD[:, 0]  /= (float(Segment)*NFFT*norm) 
         #return 10*np.log10(PSD[:, 0])
-        return types.FrequencySeries(10*np.log10(PSD[:, 0]), freq[1] - freq[0])
+    return types.FrequencySeries(10*np.log10(PSD[:, 0]), freq[1] - freq[0])
 
     
 def datafile(filename):
